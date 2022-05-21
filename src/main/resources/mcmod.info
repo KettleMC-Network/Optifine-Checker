@@ -1,0 +1,16 @@
+[
+{
+  "modid": "opticheck",
+  "name": "Optifine Checker",
+  "description": "Checks if Optifine has been installed on the client.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/KettleMC-Network/OptifineChecker",
+  "updateUrl": "https://github.com/KettleMC-Network/OptifineChecker/releases",
+  "authorList": ["LeStegii"],
+  "credits": "Optifine, for using it's AWESOME license (sarcasm off).",
+  "logoFile": "assets/opticheck/logo/logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]
