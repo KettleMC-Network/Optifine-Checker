@@ -9,11 +9,14 @@ import java.net.URI;
 import java.util.List;
 
 public class Utils {
+
+    private static final String LINE_SEPERATOR = "%nl";
+
     public static void handleGuiText(String text, FontRenderer fontRenderer, Gui gui, int width, int height) {
 
         int heightLoc = 85;
 
-        String[] lines = text.split("\n");
+        String[] lines = color(text).split(LINE_SEPERATOR);
         for (String s : lines) {
 
             List<String> info = fontRenderer.listFormattedStringToWidth(s, width - 40);
@@ -22,6 +25,10 @@ public class Utils {
                 heightLoc = heightLoc - 12;
             }
         }
+    }
+
+    public static String color(String text) {
+        return text.replace("&", "\u00a7");
     }
 
     public static boolean openUrl(URI uri) {

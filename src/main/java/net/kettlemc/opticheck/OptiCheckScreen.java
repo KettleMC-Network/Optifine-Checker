@@ -29,7 +29,7 @@ public class OptiCheckScreen extends GuiScreen {
         GlStateManager.enableTexture2D();
 
         drawDefaultBackground();
-        drawCenteredString(this.fontRenderer, TextFormatting.DARK_RED + OptiCheckConfig.title, this.width / 2, this.height / 2 - 100, 0xFFFFFF);
+        drawCenteredString(this.fontRenderer, Utils.color(OptiCheckConfig.title), this.width / 2, this.height / 2 - 100, 0xFFFFFF);
         Utils.handleGuiText(OptiCheckConfig.message, fontRenderer, this, this.width, this.height);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
