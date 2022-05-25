@@ -1,6 +1,8 @@
 package net.kettlemc.opticheck;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -8,6 +10,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = OptiCheckMod.MODID, name = OptiCheckMod.NAME, version = OptiCheckMod.VERSION, clientSideOnly = true)
@@ -55,10 +59,14 @@ public class OptiCheckMod
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent.RenderTickEvent event) {
+    @SideOnly(Side.CLIENT)
+    public void openMainMenu(GuiOpenEvent event) {
         if (shouldDisplay()) {
-            Minecraft.getMinecraft().displayGuiScreen(screen);
-            this.alreadyChecked = true;
+            if (event.getGui() instanceof GuiMainMenu) {
+                event.setGui(screen);
+                this.alreadyChecked = true;
+                return;
+            }
         }
     }
 
