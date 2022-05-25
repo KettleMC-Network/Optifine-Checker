@@ -2,7 +2,6 @@ package net.kettlemc.opticheck;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
 import java.net.URI;
@@ -10,13 +9,13 @@ import java.util.List;
 
 public class Utils {
 
-    private static final String LINE_SEPERATOR = "%nl";
+    private static final String LINE_SEPARATOR = "%nl";
 
     public static void handleGuiText(String text, FontRenderer fontRenderer, Gui gui, int width, int height) {
 
         int heightLoc = 85;
 
-        String[] lines = color(text).split(LINE_SEPERATOR);
+        String[] lines = color(text).split(LINE_SEPARATOR);
         for (String s : lines) {
 
             List<String> info = fontRenderer.listFormattedStringToWidth(s, width - 40);
