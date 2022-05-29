@@ -52,6 +52,7 @@ public class OptiCheckMod
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         this.optifinePresent = isOptifineInstalled();
+        this.alreadyChecked = getConfig().getValueAsBoolean("only-display-once", false) && getConfig().getValueAsBoolean("already-displayed", false);
         MinecraftForge.EVENT_BUS.register(this);
     }
 

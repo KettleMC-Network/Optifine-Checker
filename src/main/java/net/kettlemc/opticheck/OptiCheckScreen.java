@@ -12,7 +12,7 @@ public class OptiCheckScreen extends GuiScreen {
 
     @Override
     public void initGui() {
-        if (OptiCheckMod.getConfig().getValueAsInt("mode") == 0) {
+        if (OptiCheckMod.getConfig().getValueAsInt("mode", 0) == 0) {
             this.buttonList.add(new GuiButton(0, this.width / 2 - 154, this.height / 2 + 96, 144, 20, "Continue"));
         } else {
             buttonList.clear();
@@ -38,7 +38,7 @@ public class OptiCheckScreen extends GuiScreen {
                 for (GuiButton b : buttonList) {
                     b.enabled = false;
                 }
-                if (OptiCheckMod.getConfig().getValueAsInt("mode") == 0)
+                if (OptiCheckMod.getConfig().getValueAsInt("mode", 0) == 0)
                     this.mc.displayGuiScreen(null); // Clears the current screen
                 else
                     this.mc.shutdown(); // Closes the Game
@@ -54,6 +54,9 @@ public class OptiCheckScreen extends GuiScreen {
                 }
                 break;
             }
+        }
+        if (OptiCheckMod.getConfig().getValueAsBoolean("only-display-once", false)) {
+            OptiCheckMod.getConfig().setValue("already-displayed", true); // only display the screen once
         }
     }
 
