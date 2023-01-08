@@ -12,7 +12,7 @@ public class OptiCheckScreen extends GuiScreen {
 
     @Override
     public void initGui() {
-        if (OptiCheckMod.getConfig().getValueAsInt("mode") == 0) {
+        if (Config.instance().displayMode.equals(Config.REMIND)) {
             this.buttonList.add(new GuiButton(0, this.width / 2 - 154, this.height / 2 + 96, 144, 20, "Continue"));
         } else {
             buttonList.clear();
@@ -24,8 +24,8 @@ public class OptiCheckScreen extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        drawCenteredString(this.fontRendererObj, Utils.color(OptiCheckMod.getConfig().getValue("title")), this.width / 2, this.height / 2 - 100, 0xFFFFFF);
-        Utils.handleGuiText(OptiCheckMod.getConfig().getValue("message"), fontRendererObj, this, this.width, this.height);
+        drawCenteredString(this.fontRendererObj, Utils.color(Config.instance().title), this.width / 2, this.height / 2 - 100, 0xFFFFFF);
+        Utils.handleGuiText(Config.instance().message, fontRendererObj, this, this.width, this.height);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
@@ -38,7 +38,7 @@ public class OptiCheckScreen extends GuiScreen {
                 for (GuiButton b : buttonList) {
                     b.enabled = false;
                 }
-                if (OptiCheckMod.getConfig().getValueAsInt("mode") == 0)
+                if (Config.instance().displayMode.equals(Config.REMIND))
                     this.mc.displayGuiScreen(null); // Clears the current screen
                 else
                     this.mc.shutdown(); // Closes the Game
@@ -47,7 +47,7 @@ public class OptiCheckScreen extends GuiScreen {
             // Link
             case 1: {
                 try {
-                    Utils.openUrl(URI.create(OptiCheckMod.getConfig().getValue("url")));
+                    Utils.openUrl(URI.create(Config.instance().url));
                 } catch (Exception exception) {
                     OptiCheckMod.getLogger().error("Couldn't open link!");
                     exception.printStackTrace();
@@ -55,6 +55,7 @@ public class OptiCheckScreen extends GuiScreen {
                 break;
             }
         }
+        Config.instance().setAlreadyDisplayed(true);
     }
 
     @Override

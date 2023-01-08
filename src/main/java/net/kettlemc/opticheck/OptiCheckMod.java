@@ -9,50 +9,65 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = OptiCheckMod.MODID, name = OptiCheckMod.NAME, version = OptiCheckMod.VERSION)
-public class OptiCheckMod
-{
+public class OptiCheckMod {
+
     public static final String MODID = "opticheck";
     public static final String NAME = "Optifine Checker";
     public static final String VERSION = "1.7.10-1.0.1";
 
     private static Logger logger;
 
-    private boolean alreadyChecked = false;
-    private boolean optifinePresent = false;
-
-    private static OptiCheckScreen screen = new OptiCheckScreen();
-    private static OptiCheckConfig config = new OptiCheckConfig();
+    private boolean alreadyDisplayed = false;
+    private boolean classesDetected = false;
 
     /**
-     * Checks if Optifine is installed (Should only be called once!)
+     * Checks if all the classes are available
+     * If detection mode is MISSING, it will return true if all classes are missing
+     * If detection mode is AVAILABLE, it will return true if all classes are available
+     *
      * @return boolean - if the class was found
      */
-    private boolean isOptifineInstalled() {
+    private boolean checkClasses() {
+        boolean availableMode = Config.instance().detectionMode.equals(Config.AVAILABLE);
         try {
-            Class.forName(config.getValue("class"));
-            return true;
-        } catch (Exception e) {
+            for (String clazz : Config.instance().classes)
+                Class.forName(clazz);
+            if (availableMode)
+                return true;
             return false;
+        } catch (ClassNotFoundException e) {
+            logger.warn("Failed to find class " + e.getMessage());
+            if (availableMode)
+                return false;
+            return true;
         }
     }
 
     private boolean shouldDisplay() {
-        return !optifinePresent && !alreadyChecked;
+        return !classesDetected && !alreadyDisplayed;
     }
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
+    public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
+
+        try {
+            Config.setup(new Configuration(event.getSuggestedConfigurationFile()));
+        } catch (Exception e) {
+            getLogger().error("Couldn't load config file.");
+            e.printStackTrace();
+        }
+
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        this.optifinePresent = isOptifineInstalled();
-        this.alreadyChecked = getConfig().getValueAsBoolean("only-display-once", false) && getConfig().getValueAsBoolean("already-displayed", false);
+        this.classesDetected = !checkClasses();
+        this.alreadyDisplayed = Config.instance().onlyDisplayOnce && Config.instance().alreadyDisplayed;
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -61,18 +76,13 @@ public class OptiCheckMod
     public void openMainMenu(GuiOpenEvent event) {
         if (shouldDisplay()) {
             if (event.gui instanceof GuiMainMenu) {
-                event.gui = screen;
-                this.alreadyChecked = true;
-                return;
+                event.gui = new OptiCheckScreen();
+                this.alreadyDisplayed = true;
             }
         }
     }
 
     public static Logger getLogger() {
         return logger;
-    }
-
-    public static OptiCheckConfig getConfig() {
-        return config;
     }
 }
