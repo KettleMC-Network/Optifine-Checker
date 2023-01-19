@@ -1,5 +1,4 @@
-package net.kettlemc.opticheck;
-
+package net.kettlemc.opticheck.config;
 
 import net.minecraftforge.common.config.Configuration;
 

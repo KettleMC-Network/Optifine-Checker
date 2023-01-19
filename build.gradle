@@ -32,6 +32,16 @@ minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "eclipse"
 }
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.eclipsesource.minimal-json:minimal-json:0.9.5")
+}
+
+
 processResources
 {
     // this will ensure that this task is redone when the versions change.

@@ -1,11 +1,15 @@
-package net.kettlemc.opticheck;
+package net.kettlemc.opticheck.screen;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.kettlemc.opticheck.OptiCheckMod;
+import net.kettlemc.opticheck.Utils;
+import net.kettlemc.opticheck.config.Config;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.net.URI;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class OptiCheckScreen extends GuiScreen {
@@ -35,7 +39,7 @@ public class OptiCheckScreen extends GuiScreen {
         switch (button.id) {
             // Continue or Quit
             case 0: {
-                for (GuiButton b : buttonList) {
+                for (GuiButton b : (List<GuiButton>) buttonList) {
                     b.enabled = false;
                 }
                 if (Config.instance().displayMode.equals(Config.REMIND))
@@ -47,7 +51,7 @@ public class OptiCheckScreen extends GuiScreen {
             // Link
             case 1: {
                 try {
-                    Utils.openUrl(URI.create(Config.instance().url));
+                    Utils.openUrl(getUrl());
                 } catch (Exception exception) {
                     OptiCheckMod.getLogger().error("Couldn't open link!");
                     exception.printStackTrace();
@@ -56,6 +60,10 @@ public class OptiCheckScreen extends GuiScreen {
             }
         }
         Config.instance().setAlreadyDisplayed(true);
+    }
+
+    public URI getUrl() {
+        return URI.create(Config.instance().url);
     }
 
     @Override
