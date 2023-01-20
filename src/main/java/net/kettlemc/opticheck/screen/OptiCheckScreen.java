@@ -9,7 +9,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.net.URI;
-import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class OptiCheckScreen extends GuiScreen {
@@ -17,12 +16,12 @@ public class OptiCheckScreen extends GuiScreen {
     @Override
     public void initGui() {
         if (Config.instance().displayMode.equals(Config.REMIND)) {
-            this.buttonList.add(new GuiButton(0, this.width / 2 - 154, this.height / 2 + 96, 144, 20, "Continue"));
+            this.buttonList.add(new GuiButton(Config.instance().buttonContinue, this.width / 2 - 154, this.height / 2 + 96, 144, 20, "Continue"));
         } else {
             buttonList.clear();
-            this.buttonList.add(new GuiButton(0, this.width / 2 - 154, this.height / 2 + 96, 144, 20, "Quit Game"));
+            this.buttonList.add(new GuiButton(Config.instance().buttonContinue, this.width / 2 - 154, this.height / 2 + 96, 144, 20, "Quit Game"));
         }
-        this.buttonList.add(new GuiButton(1, this.width / 2 + 10, this.height / 2 + 96, 144, 20, "Link"));
+        this.buttonList.add(new GuiButton(Config.instance().buttonLink, this.width / 2 + 10, this.height / 2 + 96, 144, 20, "Link"));
     }
 
     @Override
@@ -36,27 +35,22 @@ public class OptiCheckScreen extends GuiScreen {
 
     @Override
     protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            // Continue or Quit
-            case 0: {
-                for (GuiButton b : (List<GuiButton>) buttonList) {
-                    b.enabled = false;
-                }
-                if (Config.instance().displayMode.equals(Config.REMIND))
-                    this.mc.displayGuiScreen(null); // Clears the current screen
-                else
-                    this.mc.shutdown(); // Closes the Game
-                break;
+        int linkId = Config.instance().buttonLink;
+        int otherId = Config.instance().buttonContinue;
+        if (button.id == otherId) { // Continue/Quit
+            for (Object b : buttonList) {
+                ((GuiButton) b).enabled = false;
             }
-            // Link
-            case 1: {
-                try {
-                    Utils.openUrl(getUrl());
-                } catch (Exception exception) {
-                    OptiCheckMod.getLogger().error("Couldn't open link!");
-                    exception.printStackTrace();
-                }
-                break;
+            if (Config.instance().displayMode.equals(Config.REMIND))
+                this.mc.displayGuiScreen(null); // Clears the current screen
+            else
+                this.mc.shutdown(); // Closes the Game
+        } else if (button.id == linkId) { // Link
+            try {
+                Utils.openUrl(getUrl());
+            } catch (Exception exception) {
+                OptiCheckMod.getLogger().error("Couldn't open link!");
+                exception.printStackTrace();
             }
         }
         Config.instance().setAlreadyDisplayed(true);

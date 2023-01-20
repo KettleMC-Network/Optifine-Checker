@@ -10,6 +10,9 @@ public class Config {
     private static Config instance;
     private final Configuration config;
 
+    public final int buttonContinue;
+    public final int buttonLink;
+
     public final boolean onlyDisplayOnce;
     public final boolean alreadyDisplayed;
 
@@ -43,6 +46,9 @@ public class Config {
         this.title = title();
         this.message = message();
 
+        this.buttonContinue = buttonOtherId();
+        this.buttonLink = buttonLinkId();
+
         this.config.setCategoryComment("advanced", "Don't change these settings unless you know what you're doing.");
         this.config.setCategoryComment("messages", "The messages that will be displayed upon detecting the classes");
         this.config.setCategoryComment("settings", "All settings needed to configure the optifine detection.");
@@ -54,6 +60,15 @@ public class Config {
         String s = defaultValue;
         try {
             s = config.getString(key, category, defaultValue, comment);
+        } catch (Exception e) {
+        }
+        return s;
+    }
+
+    private int getInt(String key, String category, int defaultValue, int min, int max, String comment) {
+        int s = defaultValue;
+        try {
+            s = config.getInt(key, category, defaultValue, min, max, comment);
         } catch (Exception e) {
         }
         return s;
@@ -135,6 +150,14 @@ public class Config {
     private String url() {
         return getString("url", "settings", "https://optifine.net/adloadx?f=OptiFine_1.7.10_HD_U_E7.jar",
                 "The url that should be displayed when clicking the Link button.");
+    }
+
+    private int buttonLinkId() {
+        return config.getInt("link_button_id", "advanced", 420, 0, Integer.MAX_VALUE, "The id of the button that opens the link.");
+    }
+
+    private int buttonOtherId() {
+        return config.getInt("other_button_id", "advanced", 421, 0, Integer.MAX_VALUE, "The id of the button that continues/closes the game.");
     }
 
     public static void setup(Configuration configuration) {
