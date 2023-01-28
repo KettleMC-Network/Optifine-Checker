@@ -16,12 +16,13 @@ public class OptiCheckScreen extends GuiScreen {
     @Override
     public void initGui() {
         if (Config.instance().displayMode.equals(Config.REMIND)) {
-            this.buttonList.add(new GuiButton(Config.instance().buttonContinue, this.width / 2 - 154, this.height / 2 + 96, 144, 20, "Continue"));
+            this.buttonList.add(new GuiButton(Config.instance().buttonContinue, this.width / 2 - 204, this.height / 2 + 96, 124, 20, Utils.color(Config.instance().buttonContinueText)));
         } else {
             buttonList.clear();
-            this.buttonList.add(new GuiButton(Config.instance().buttonContinue, this.width / 2 - 154, this.height / 2 + 96, 144, 20, "Quit Game"));
+            this.buttonList.add(new GuiButton(Config.instance().buttonContinue, this.width / 2 - 204, this.height / 2 + 96, 124, 20, Utils.color(Config.instance().buttonQuitText)));
         }
-        this.buttonList.add(new GuiButton(Config.instance().buttonLink, this.width / 2 + 10, this.height / 2 + 96, 144, 20, "Link"));
+        this.buttonList.add(new GuiButton(Config.instance().buttonMods, this.width / 2 - 62, this.height / 2 + 96, 124, 20, Utils.color(Config.instance().buttonModsText)));
+        this.buttonList.add(new GuiButton(Config.instance().buttonLink, this.width / 2 + 80, this.height / 2 + 96, 124, 20, Utils.color(Config.instance().buttonLinkText)));
     }
 
     @Override
@@ -37,15 +38,28 @@ public class OptiCheckScreen extends GuiScreen {
     protected void actionPerformed(GuiButton button) {
         int linkId = Config.instance().buttonLink;
         int otherId = Config.instance().buttonContinue;
-        if (button.id == otherId) { // Continue/Quit
+        int modsId = Config.instance().buttonMods;
+
+        // Continue/Quit
+        if (button.id == otherId) {
+
+            // Disable all button
             for (Object b : buttonList) {
                 ((GuiButton) b).enabled = false;
             }
-            if (Config.instance().displayMode.equals(Config.REMIND))
+
+            // Shutdown or display main menu
+            if (Config.instance().displayMode.equals(Config.REMIND)) {
                 this.mc.displayGuiScreen(null); // Clears the current screen
-            else
+                Config.instance().setAlreadyDisplayed(true); // Screen has been displayed already
+            } else {
                 this.mc.shutdown(); // Closes the Game
-        } else if (button.id == linkId) { // Link
+            }
+
+        }
+
+        // Open Link
+        else if (button.id == linkId) {
             try {
                 Utils.openUrl(getUrl());
             } catch (Exception exception) {
@@ -53,7 +67,16 @@ public class OptiCheckScreen extends GuiScreen {
                 exception.printStackTrace();
             }
         }
-        Config.instance().setAlreadyDisplayed(true);
+
+        // Open the mods folder
+        else if (button.id == modsId) {
+            try {
+                Utils.openModsFolder();
+            } catch (Exception exception) {
+                OptiCheckMod.getLogger().error("Couldn't open mods folder!");
+                exception.printStackTrace();
+            }
+        }
     }
 
     public URI getUrl() {

@@ -1,9 +1,13 @@
 package net.kettlemc.opticheck;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
+import java.io.File;
 import java.net.URI;
 import java.util.List;
 
@@ -27,7 +31,40 @@ public class Utils {
     }
 
     public static String color(String text) {
-        return text.replace("&", "\u00a7");
+        return color('&', text);
+    }
+
+    // Inspired by https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/ChatColor.java#216
+    public static String color(char colorChar, String text) {
+
+        char[] chars = text.toCharArray();
+        for (int i = 0; i < chars.length - 1; i++) {
+            if (chars[i] == colorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx".indexOf(chars[i + 1]) > -1) {
+                chars[i] = '\u00A7';
+                chars[i + 1] = Character.toLowerCase(chars[i + 1]);
+            }
+        }
+        return new String(chars);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static boolean openModsFolder() {
+        OptiCheckMod.getLogger().info("Trying to open mods folder");
+        try {
+            if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                OptiCheckMod.getLogger().error("Couldn't open mods folder!");
+                return false;
+            }
+
+            Desktop.getDesktop().open(new File(Minecraft.getMinecraft().mcDataDir + "/mods/"));
+            OptiCheckMod.getLogger().info("Opened mods folder successfully!");
+            return true;
+
+        } catch (Exception exception) {
+            OptiCheckMod.getLogger().error("Error while opening the mods folder.", exception);
+            exception.printStackTrace();
+            return false;
+        }
     }
 
     public static boolean openUrl(URI uri) {

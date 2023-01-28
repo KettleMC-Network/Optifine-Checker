@@ -1,9 +1,11 @@
 package net.kettlemc.opticheck.config;
 
+import com.google.common.io.Files;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 
 public class Config {
 
@@ -12,6 +14,7 @@ public class Config {
 
     public final int buttonContinue;
     public final int buttonLink;
+    public final int buttonMods;
 
     public final boolean onlyDisplayOnce;
     public final boolean alreadyDisplayed;
@@ -24,6 +27,10 @@ public class Config {
 
     public final String title;
     public final String message;
+    public final String buttonLinkText;
+    public final String buttonQuitText;
+    public final String buttonContinueText;
+    public final String buttonModsText;
 
     public static final String MISSING = "MISSING";
     public static final String AVAILABLE = "AVAILABLE";
@@ -45,9 +52,14 @@ public class Config {
 
         this.title = title();
         this.message = message();
+        this.buttonLinkText = buttonLinkText();
+        this.buttonQuitText = buttonQuitText();
+        this.buttonContinueText = buttonContinueText();
+        this.buttonModsText = buttonModsText();
 
         this.buttonContinue = buttonOtherId();
         this.buttonLink = buttonLinkId();
+        this.buttonMods = buttonModsId();
 
         this.config.setCategoryComment("advanced", "Don't change these settings unless you know what you're doing.");
         this.config.setCategoryComment("messages", "The messages that will be displayed upon detecting the classes");
@@ -102,10 +114,11 @@ public class Config {
     }
 
     public void setAlreadyDisplayed(boolean alreadyDisplayed) {
-        File file = new File("opticheck-already-displayed");
+        File file = new File("opticheck-already-displayed"); // Not included in the config directory so that it won't be redistributed by accident
         if (alreadyDisplayed) {
             try {
                 file.createNewFile();
+                Files.write(Instant.now().toString().getBytes(), file);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -158,6 +171,34 @@ public class Config {
 
     private int buttonOtherId() {
         return config.getInt("other_button_id", "advanced", 421, 0, Integer.MAX_VALUE, "The id of the button that continues/closes the game.");
+    }
+
+    private int buttonModsId() {
+        return config.getInt("mods_button_id", "advanced", 422, 0, Integer.MAX_VALUE, "The id of the button that opens the mods folder.");
+    }
+
+    private String buttonLinkText() {
+        return getString("link_button_text", "messages", "Download Optifine",
+                "The text of the download button."
+        );
+    }
+
+    private String buttonQuitText() {
+        return getString("quit_button_text", "messages", "Quit",
+                "The text of the quit button."
+        );
+    }
+
+    private String buttonContinueText() {
+        return getString("continue_button_text", "messages", "Continue",
+                "The text of the continue button."
+        );
+    }
+
+    private String buttonModsText() {
+        return getString("mods_button_text", "messages", "Open Mods Folder",
+                "The text of the mods button."
+        );
     }
 
     public static void setup(Configuration configuration) {
