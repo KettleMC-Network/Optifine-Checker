@@ -2,9 +2,12 @@ package net.kettlemc.opticheck;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.kettlemc.opticheck.config.Config;
+import net.kettlemc.opticheck.config.DetectionMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraftforge.common.config.Property;
 
 import java.awt.*;
 import java.io.File;
@@ -85,5 +88,20 @@ public class Utils {
             exception.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Fixes invalid/outdated config values manually
+     */
+    public static void fixOldConfigs() {
+
+        // Legacy detection modes
+        Property detection = Config.DETECTION_MODE;
+        if (DetectionMode.fromString(detection.getString()) == null) {
+            detection.setValue(DetectionMode.ALL_MISSING.toString());
+        }
+
+        Config.getConfig().save();
+
     }
 }

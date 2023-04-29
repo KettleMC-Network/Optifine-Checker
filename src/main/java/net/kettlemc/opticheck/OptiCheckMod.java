@@ -39,12 +39,13 @@ public class OptiCheckMod {
             getLogger().error("Couldn't load config file.");
             e.printStackTrace();
         }
+        Utils.fixOldConfigs();
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         this.classesDetected = !ModDetector.checkClasses();
-        this.alreadyDisplayed = Config.instance().onlyDisplayOnce && Config.instance().alreadyDisplayed;
+        this.alreadyDisplayed = Config.instance().ONLY_DISPLAY_ONCE.getBoolean() && Config.instance().ALREADY_DISPLAYED;
         MinecraftForge.EVENT_BUS.register(this);
     }
 
