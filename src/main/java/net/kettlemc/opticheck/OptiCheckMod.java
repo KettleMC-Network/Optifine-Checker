@@ -1,5 +1,7 @@
 package net.kettlemc.opticheck;
 
+import net.kettlemc.opticheck.config.OptiCheckConfig;
+import net.kettlemc.opticheck.screen.OptiCheckScreen;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -13,46 +15,33 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = OptiCheckMod.MODID, name = OptiCheckMod.NAME, version = OptiCheckMod.VERSION, clientSideOnly = true)
-public class OptiCheckMod
-{
+public class OptiCheckMod {
     public static final String MODID = "opticheck";
     public static final String NAME = "Optifine Checker";
-    public static final String VERSION = "1.12.2-1.0.1";
+    public static final String VERSION = "1.12.2-1.2.1";
 
     private static Logger logger;
 
-    private boolean alreadyChecked = false;
-    private boolean optifinePresent = false;
+    private boolean alreadyDisplayed = false;
+    private boolean classesDetected = false;
 
-    private static OptiCheckScreen screen = new OptiCheckScreen();
-
-
-    /**
-     * Checks if Optifine is installed (Should only be called once!)
-     * @return boolean - if the class was found
-     */
-    private boolean isOptifineInstalled() {
-        try {
-            Class.forName(OptiCheckConfig.clazz);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public static Logger getLogger() {
+        return logger;
     }
 
     private boolean shouldDisplay() {
-        return !optifinePresent && !alreadyChecked;
+        return classesDetected && !alreadyDisplayed;
     }
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
+    public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        this.optifinePresent = isOptifineInstalled();
+        this.alreadyDisplayed = OptiCheckConfig.Settings.ONLY_DISPLAY_ONCE && OptiCheckConfig.alreadyDisplayed();
+        if (!this.alreadyDisplayed) this.classesDetected = ModDetector.checkClasses();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -61,14 +50,9 @@ public class OptiCheckMod
     public void openMainMenu(GuiOpenEvent event) {
         if (shouldDisplay()) {
             if (event.getGui() instanceof GuiMainMenu) {
-                event.setGui(screen);
-                this.alreadyChecked = true;
-                return;
+                event.setGui(new OptiCheckScreen());
+                this.alreadyDisplayed = true;
             }
         }
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 }
