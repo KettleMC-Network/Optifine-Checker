@@ -11,7 +11,7 @@ import java.time.Instant;
 public class Config {
 
     private static Config instance;
-    private static Configuration config;
+    private static Configuration configuration;
 
     public static boolean ALREADY_DISPLAYED;
     public static Property ONLY_DISPLAY_ONCE;
@@ -34,8 +34,8 @@ public class Config {
     public static Property MODS_FOLDER_BUTTON_ID;
 
     private Config(Configuration config) {
-        this.config = config;
-        this.config.load();
+        configuration = config;
+        configuration.load();
 
          CONTINUE_QUIT_BUTTON_ID = config.get("advanced", "other_button_id", 421,
                 "The id of the button that continues/closes the game.",
@@ -103,10 +103,10 @@ public class Config {
                 "The text of the mods button."
         );
 
-        this.config.setCategoryComment("advanced", "Don't change these settings unless you know what you're doing.");
-        this.config.setCategoryComment("messages", "The messages that will be displayed upon detecting the classes");
-        this.config.setCategoryComment("settings", "All settings needed to configure the optifine detection.");
-        this.config.save();
+        configuration.setCategoryComment("advanced", "Don't change these settings unless you know what you're doing.");
+        configuration.setCategoryComment("messages", "The messages that will be displayed upon detecting the classes");
+        configuration.setCategoryComment("settings", "All settings needed to configure the optifine detection.");
+        configuration.save();
 
     }
 
@@ -115,15 +115,12 @@ public class Config {
             instance = new Config(configuration);
     }
 
-    public static Config instance() {
-        return instance;
-    }
-
     public static Configuration getConfig() {
-        return config;
+        return configuration;
     }
 
-    public void setAlreadyDisplayed(boolean alreadyDisplayed) {
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "UnstableApiUsage"})
+    public static void setAlreadyDisplayed(boolean alreadyDisplayed) {
         File file = new File("opticheck-already-displayed"); // Not included in the config directory so that it won't be redistributed by accident
         if (alreadyDisplayed) {
             try {

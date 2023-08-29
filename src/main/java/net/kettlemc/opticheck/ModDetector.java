@@ -15,14 +15,14 @@ public class ModDetector {
      * @return Whether the screen should be displayed
      */
     public static boolean checkClasses() {
-        DetectionMode mode = DetectionMode.fromString(Config.instance().DETECTION_MODE.getString());
+        DetectionMode mode = DetectionMode.fromString(Config.DETECTION_MODE.getString());
 
         if (mode == null) {
             OptiCheckMod.getLogger().error("Detected config error, please use a valid detection mode!");
             return false;
         }
 
-        int clazzAmount = Config.instance().CLASSES.getStringList().length;
+        int clazzAmount = Config.CLASSES.getStringList().length;
         int clazzCounter = 0;
 
         for (String clazz : Config.CLASSES.getStringList()) {

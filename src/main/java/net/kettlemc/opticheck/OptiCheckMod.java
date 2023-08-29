@@ -19,7 +19,7 @@ public class OptiCheckMod {
 
     public static final String MODID = "opticheck";
     public static final String NAME = "Optifine Checker";
-    public static final String VERSION = "1.7.10-1.2.0";
+    public static final String VERSION = "1.7.10-1.2.1";
 
     private static Logger logger;
 
@@ -27,7 +27,7 @@ public class OptiCheckMod {
     private boolean classesDetected = false;
 
     private boolean shouldDisplay() {
-        return !classesDetected && !alreadyDisplayed;
+        return classesDetected && !alreadyDisplayed;
     }
 
     @Mod.EventHandler
@@ -44,8 +44,8 @@ public class OptiCheckMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        this.classesDetected = !ModDetector.checkClasses();
-        this.alreadyDisplayed = Config.instance().ONLY_DISPLAY_ONCE.getBoolean() && Config.instance().ALREADY_DISPLAYED;
+        this.alreadyDisplayed = Config.ONLY_DISPLAY_ONCE.getBoolean() && Config.ALREADY_DISPLAYED;
+        if (!alreadyDisplayed) this.classesDetected = !ModDetector.checkClasses();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
